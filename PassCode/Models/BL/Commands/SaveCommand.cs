@@ -9,6 +9,8 @@ namespace PassCode.Models.BL.Commands
 {
     public class SaveCommand : ICustomCommand
     {
+        private readonly string _customName;
+
         private readonly IOutput _output;
         private readonly IWordContainer _container;
         private readonly ICoder _coder;
@@ -18,6 +20,7 @@ namespace PassCode.Models.BL.Commands
         public SaveCommand(IOutput output, IWordContainer container, ICoder coder,
             IAppSettings appSettings, IFileAction fileAction)
         {
+            _customName = "save";
             _output = output;
             _container = container;
             _coder = coder;
@@ -25,9 +28,19 @@ namespace PassCode.Models.BL.Commands
             _fileAction = fileAction;
         }
 
+        public string GetCutomName()
+        {
+            return _customName;
+        }
+
+        public string GetShortDescription()
+        {
+            return "save - encrypt and save new file - 'save <newfilename> <?key>'";
+        }
+
         public bool TryDo(string command)
         {
-            if (!command.StartsWith("save"))
+            if (!command.StartsWith(_customName))
             {
                 return false;
             }
@@ -45,12 +58,20 @@ namespace PassCode.Models.BL.Commands
                 key = splitCommand[2];
             }
 
-            if (string.IsNullOrWhiteSpace(key))
+            if (_container.Decoded)
             {
-                throw new CommandHandleException($"ключ не задан");
+                if (string.IsNullOrWhiteSpace(key))
+                {
+                    throw new CommandHandleException($"ключ не задан");
+                }
             }
+            else
+            {
+                _output.WriteLine("внимание, данные просто пересохранены в указанный файл, дополнительное шифрование не производилось тк данные были уже зашифрованы");
+            }
+            
 
-            string pathForSave = "./" + splitCommand[1];
+            string pathForSave =  splitCommand[1];//"./"
 
             if (_fileAction.Exists(pathForSave))
             {
@@ -64,7 +85,7 @@ namespace PassCode.Models.BL.Commands
                 string value = item.Value;
                 if (_container.Decoded)//мб тут лишнее, шифровать всегда
                 {
-                    value = _coder.BytesToCustomString(_coder.EncryptWithByte(item.Value, key));
+                    value = _coder.BytesToCustomString(_coder.EncryptWithByte(_coder.AddRandomizeToString(item.Value), key));
                 }
                 
                 forWrite.Add(item.Key + "-" + value);

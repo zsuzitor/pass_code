@@ -8,20 +8,33 @@ namespace PassCode.Models.BL.Commands
 {
     public class FileLoaderCommand : ICustomCommand
     {
+        private readonly string _customName;
+
         private readonly IOutput _output;
         private readonly IWordContainer _container;
         private readonly IFileAction _fileAction;
 
         public FileLoaderCommand(IOutput output, IWordContainer container, IFileAction fileAction)
         {
+            _customName = "lcf";
             _output = output;
             _container = container;
             _fileAction = fileAction;
         }
 
+        public string GetCutomName()
+        {
+            return _customName;
+        }
+
+        public string GetShortDescription()
+        {
+            return "lcf - load crypted file - 'lcf <filepath>'";
+        }
+
         public bool TryDo(string command)
         {
-            if (!command.StartsWith("lcf"))
+            if (!command.StartsWith(_customName))
             {
                 return false;
             }

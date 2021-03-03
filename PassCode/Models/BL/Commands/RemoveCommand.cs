@@ -5,18 +5,31 @@ namespace PassCode.Models.BL.Commands
 {
     public class RemoveCommand : ICustomCommand
     {
+        private readonly string _customName;
+
         private readonly IOutput _output;
         private readonly IWordContainer _container;
 
         public RemoveCommand(IOutput output, IWordContainer container)
         {
+            _customName = "rm";
             _output = output;
             _container = container;
         }
 
+        public string GetCutomName()
+        {
+            return _customName;
+        }
+
+        public string GetShortDescription()
+        {
+            return "rm - remove word by key - rm <key>";
+        }
+
         public bool TryDo(string command)
         {
-            if (!command.StartsWith("rm"))
+            if (!command.StartsWith(_customName))
             {
                 return false;
             }

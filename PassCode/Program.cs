@@ -74,7 +74,7 @@ namespace PassCode
             IAppSettings appSettings = new AppSettings();
             IFileAction fileActions = new CommonFileAction();
 
-            commands.Add(new HelpCommand(outPut));
+            commands.Add(new HelpCommand(outPut, commands));
             commands.Add(new AddCommand(outPut, wordContainer, coder));
             commands.Add(new FileDecoderCommand(outPut, wordContainer, coder, appSettings));
             commands.Add(new FileLoaderCommand(outPut, wordContainer, fileActions));

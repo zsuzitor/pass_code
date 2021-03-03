@@ -7,18 +7,32 @@ namespace PassCode.Models.BL.Commands
 {
     public class FastDecoderCommand : ICustomCommand
     {
+        private readonly string _customName;
+
         private readonly IOutput _output;
         private readonly ICoder _coder;
 
         public FastDecoderCommand(IOutput output, ICoder coder)
         {
+            _customName = "fdec";
+
             _output = output;
             _coder = coder;
         }
 
+        public string GetCutomName()
+        {
+            return _customName;
+        }
+
+        public string GetShortDescription()
+        {
+            return "fdec - fast decode string - 'fdec <str> <pass>'";
+        }
+
         public bool TryDo(string command)
         {
-            if (!command.StartsWith("fdec"))
+            if (!command.StartsWith(_customName))
             {
                 return false;
             }
