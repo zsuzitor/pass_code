@@ -93,10 +93,17 @@ namespace PassCode.Models.BL
         {
             var keyBytes = Encoding.UTF8.GetBytes(key);
             byte[] keyBytesGood = new byte[32];
-            for (var i = 0; i < keyBytes.Length; ++i)
+            var j = 0;
+            for (var i = 0; i < keyBytesGood.Length; ++i, ++j)
             {
-                keyBytesGood[i] = keyBytes[i];
+                if(j >= keyBytes.Length)
+                { 
+                    j = 0;
+                }
+
+                keyBytesGood[i] = keyBytes[j];
             }
+
             return keyBytesGood;
         }
 
