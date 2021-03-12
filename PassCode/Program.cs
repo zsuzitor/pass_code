@@ -21,26 +21,35 @@ namespace PassCode
             //commandHandleException - должно быть только в command, все что глубже должно бросать другое
 
             var commands = new List<ICustomCommand>();
-            CommandsInit(commands);
+            IAppSettings appSettings = new AppSettings();
+            CommandsInit(commands, appSettings);
 
             Console.WriteLine("автор не несет ответственность за утерю, распространение, передачу третьим лицам и тд любых введенных данных");
             Console.WriteLine("автор не несет ответственность за любые проблемы, потери возникшие в результате работы программы");
             Console.WriteLine("license - MIT");
             var command = "";
-            //File.read
+
+
             do
             {
                 try
                 {
-                    bool commandDid = false;
-                    Console.WriteLine("введите команду");
-
-                    command = Console.ReadLine();
-                    if (string.IsNullOrWhiteSpace(command))
+                    if (!appSettings.HasValideKey())
                     {
-                        //Console.WriteLine("строка пустая");
-                        continue;
+                        command = Login();
                     }
+                    else
+                    {
+                        Console.WriteLine("введите команду");
+                        command = Console.ReadLine();
+                        if (string.IsNullOrWhiteSpace(command))
+                        {
+                            //Console.WriteLine("строка пустая");
+                            continue;
+                        }
+                    }
+
+                    bool commandDid = false;
 
                     foreach (var cmd in commands)
                     {
@@ -66,25 +75,47 @@ namespace PassCode
 
         }
 
-        private static void CommandsInit(List<ICustomCommand> commands)
+        private static void CommandsInit(List<ICustomCommand> commands, IAppSettings appSettings)
         {
             IOutput outPut = new ConsoleOutput();
             ICoder coder = new AesCoder();
             IWordContainer wordContainer = new WordContainer();
-            IAppSettings appSettings = new AppSettings();
             IFileAction fileActions = new CommonFileAction();
 
             commands.Add(new HelpCommand(outPut, commands));
             commands.Add(new AddCommand(outPut, wordContainer, coder));
-            commands.Add(new FileDecoderCommand(outPut, wordContainer, coder, appSettings));
+            //commands.Add(new FileDecoderCommand(outPut, wordContainer, coder, appSettings));
             commands.Add(new FileLoaderCommand(outPut, wordContainer, fileActions));
             commands.Add(new RemoveCommand(outPut, wordContainer));
             commands.Add(new SaveCommand(outPut, wordContainer, coder, appSettings, fileActions));
+            commands.Add(new LoginCommand(outPut, appSettings));
             commands.Add(new ShowCommand(outPut, wordContainer, coder));
             commands.Add(new GetCommand(outPut, wordContainer, coder));
-            commands.Add(new ClearCommand(outPut, wordContainer));
+            commands.Add(new ClearCommand(outPut, wordContainer, appSettings));
             commands.Add(new FastDecoderCommand(outPut, coder));
             commands.Add(new FastEncoderCommand(outPut, coder));
+        }
+
+        private static string Login()
+        {
+            ConsoleKeyInfo key;
+            string login = "";
+
+            Console.Write("Enter password: ");
+            do
+            {
+                key = Console.ReadKey(true);
+
+                // Ignore any key out of range.
+                if (((int)key.Key) >= 65 && ((int)key.Key <= 90))
+                {
+                    // Append the character to the password.
+                    login += key.KeyChar;
+                    Console.Write("*");
+                }
+                // Exit if Enter key is pressed.
+            } while (key.Key != ConsoleKey.Enter);
+            return "login " + login;
         }
 
     }

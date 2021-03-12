@@ -9,13 +9,15 @@ namespace PassCode.Models.BL.Commands
 
         private readonly IOutput _output;
         private readonly IWordContainer _container;
+        private readonly IAppSettings _appSettings;
 
-        public ClearCommand(IOutput output, IWordContainer container)
+        public ClearCommand(IOutput output, IWordContainer container, IAppSettings appsettings)
         {
             _customName = "clear";
 
             _output = output;
             _container = container;
+            _appSettings = appsettings;
         }
 
         public string GetCutomName()
@@ -37,6 +39,7 @@ namespace PassCode.Models.BL.Commands
 
             _container.Clear();
             _container.Decoded = false;
+            _appSettings.Key = null;
             //_container.FileLoaded = false;
             _output.Clear();
 

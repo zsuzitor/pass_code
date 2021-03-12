@@ -5,7 +5,7 @@ namespace PassCode.Models.BL.Interfaces
 {
     public interface IWordContainer
     {
-        public bool Decoded { get; set; }
+        //public bool Decoded { get; set; }
         //public bool FileLoaded { get; set; }
 
         OneWord Get(string key);

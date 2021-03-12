@@ -7,5 +7,10 @@ namespace PassCode.Models.BL
     public class AppSettings : IAppSettings
     {
         public string Key { get; set; }//todo вроде есть зашифрованные строки, может использовать их?
+
+        public bool HasValideKey()
+        {
+            return (!string.IsNullOrWhiteSpace(Key));
+        }
     }
 }
