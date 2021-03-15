@@ -35,7 +35,9 @@ namespace PassCode.Models.BL.Commands
 
         public string GetShortDescription()
         {
-            return "save - encrypt and save new file - 'save <newfilename> <?key>'";
+            //
+            return $"{_customName} - encrypt and save new file, dont change current credentials " +
+                $"- '{_customName} <newfilename> [?<login> <key>]'";
         }
 
         public bool TryDo(string command)
@@ -49,45 +51,57 @@ namespace PassCode.Models.BL.Commands
             var argCount = 2;
             if (splitCommand.Length < argCount)
             {
-                throw new CommandHandleException($"{argCount} аргумента");
+                throw new CommandHandleException($"min {argCount} аргумента");
             }
 
-            string key = _appSettings?.Key;
+            string loginForSave = _appSettings.Login;
+            string passwordForSave = _appSettings.Key;
+            bool differentCredit = false;
+
             if (splitCommand.Length > 2)
             {
-                key = splitCommand[2];
-            }
-
-            if (_container.Decoded)
-            {
-                if (string.IsNullOrWhiteSpace(key))
+                if (splitCommand.Length < 4)
                 {
-                    throw new CommandHandleException($"ключ не задан");
+                    throw new CommandHandleException($"2 or 4 arg");
                 }
-            }
-            else
-            {
-                _output.WriteLine("внимание, данные просто пересохранены в указанный файл, дополнительное шифрование не производилось тк данные были уже зашифрованы");
-            }
-            
+                else
+                {
+                    loginForSave = splitCommand[2];
+                    passwordForSave = splitCommand[3];
+                    differentCredit = true;
+                }
 
-            string pathForSave =  splitCommand[1];//"./"
+            }
+
+
+            string pathForSave = splitCommand[1];//"./"
 
             if (_fileAction.Exists(pathForSave))
             {
-                throw new CommandHandleException($"файл уже существует");
+                throw new CommandHandleException($"file is exist");
             }
 
 
             List<string> forWrite = new List<string>();
+            forWrite.Add("check" + "-"
+                + _coder.BytesToCustomString(
+                    _coder.EncryptWithByte(
+                        _coder.AddRandomizeToString(loginForSave), passwordForSave)));
             foreach (var item in _container.GetAll())
             {
                 string value = item.Value;
-                if (_container.Decoded)//мб тут лишнее, шифровать всегда
+                if (!differentCredit)
                 {
-                    value = _coder.BytesToCustomString(_coder.EncryptWithByte(_coder.AddRandomizeToString(item.Value), key));
+                    value = item.Value;
                 }
-                
+                else
+                {
+                    value = _coder.BytesToCustomString(
+                        _coder.EncryptWithByte(
+                            _coder.DecryptFromBytes(
+                                _coder.CustomStringToBytes(value), _appSettings.Key), passwordForSave));
+                }
+
                 forWrite.Add(item.Key + "-" + value);
             }
 

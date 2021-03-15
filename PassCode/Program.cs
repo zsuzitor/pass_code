@@ -12,12 +12,9 @@ namespace PassCode
         static void Main(string[] args)
         {
             //todo конфиг
-            //флаг сессионности, вводишь пароль 1 раз и он запоминается пока не закроешь апу
             //пароль в конфиге
             //название файла в конфиге для загрузки
-
             //при загрузке файла не давать его загрузить если есть не сохраненные данные
-
             //commandHandleException - должно быть только в command, все что глубже должно бросать другое
 
             var commands = new List<ICustomCommand>();
@@ -28,15 +25,20 @@ namespace PassCode
             Console.WriteLine("автор не несет ответственность за любые проблемы, потери возникшие в результате работы программы");
             Console.WriteLine("license - MIT");
             var command = "";
-
+            //var g_ = (int)'z';
 
             do
             {
                 try
                 {
-                    if (!appSettings.HasValideKey())
+                    if (!appSettings.HasValideDataForAuth())
                     {
-                        command = Login();
+
+                        Console.WriteLine("Enter login: ");
+                        var login = Login();
+                        Console.WriteLine("Enter password: ");
+                        var password = Login();
+                        command = $"login {login} {password}";
                     }
                     else
                     {
@@ -83,14 +85,14 @@ namespace PassCode
             IFileAction fileActions = new CommonFileAction();
 
             commands.Add(new HelpCommand(outPut, commands));
-            commands.Add(new AddCommand(outPut, wordContainer, coder));
+            commands.Add(new AddCommand(outPut, wordContainer, coder, appSettings));
             //commands.Add(new FileDecoderCommand(outPut, wordContainer, coder, appSettings));
-            commands.Add(new FileLoaderCommand(outPut, wordContainer, fileActions));
+            commands.Add(new FileLoaderCommand(outPut, wordContainer, fileActions, coder, appSettings));
             commands.Add(new RemoveCommand(outPut, wordContainer));
             commands.Add(new SaveCommand(outPut, wordContainer, coder, appSettings, fileActions));
             commands.Add(new LoginCommand(outPut, appSettings));
             commands.Add(new ShowCommand(outPut, wordContainer, coder));
-            commands.Add(new GetCommand(outPut, wordContainer, coder));
+            commands.Add(new GetCommand(outPut, wordContainer, coder, appSettings));
             commands.Add(new ClearCommand(outPut, wordContainer, appSettings));
             commands.Add(new FastDecoderCommand(outPut, coder));
             commands.Add(new FastEncoderCommand(outPut, coder));
@@ -101,13 +103,12 @@ namespace PassCode
             ConsoleKeyInfo key;
             string login = "";
 
-            Console.Write("Enter password: ");
             do
             {
                 key = Console.ReadKey(true);
 
                 // Ignore any key out of range.
-                if (((int)key.Key) >= 65 && ((int)key.Key <= 90))
+                if (((int)key.Key) >= 65 && ((int)key.Key <= 90))//TODO посмотреть что тут за символы в ренже
                 {
                     // Append the character to the password.
                     login += key.KeyChar;
@@ -115,7 +116,7 @@ namespace PassCode
                 }
                 // Exit if Enter key is pressed.
             } while (key.Key != ConsoleKey.Enter);
-            return "login " + login;
+            return login;
         }
 
     }

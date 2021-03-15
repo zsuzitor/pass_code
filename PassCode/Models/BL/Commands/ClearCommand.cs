@@ -27,7 +27,7 @@ namespace PassCode.Models.BL.Commands
 
         public string GetShortDescription()
         {
-            return "clear - clear word container and console - 'clear'";
+            return $"{_customName} - clear word container and console - '{_customName}'";
         }
 
         public bool TryDo(string command)
@@ -38,8 +38,8 @@ namespace PassCode.Models.BL.Commands
             }
 
             _container.Clear();
-            _container.Decoded = false;
-            _appSettings.Key = null;
+            //_container.Decoded = false;
+            _appSettings.ClearCredit();
             //_container.FileLoaded = false;
             _output.Clear();
 

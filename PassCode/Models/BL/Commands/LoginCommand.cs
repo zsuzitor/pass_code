@@ -12,7 +12,7 @@ namespace PassCode.Models.BL.Commands
         private readonly IOutput _output;
         private readonly IAppSettings _appSettings;
 
-        public LoginCommand(IOutput output,  IAppSettings appSettings)
+        public LoginCommand(IOutput output, IAppSettings appSettings)
         {
             _customName = "login";
 
@@ -27,7 +27,7 @@ namespace PassCode.Models.BL.Commands
 
         public string GetShortDescription()
         {
-            return "login - login - 'login <password>'";
+            return $"{_customName} - login - '{_customName} <login> <password>'";
         }
 
 
@@ -39,15 +39,21 @@ namespace PassCode.Models.BL.Commands
             }
 
             var commandSplit = command.Split(" ");
-            var argCount = 2;
+            var argCount = 3;
             if (commandSplit.Length < argCount)
             {
                 throw new CommandHandleException($"{argCount} аргумента");
             }
 
-            _appSettings.Key = commandSplit[1];
-            if (!_appSettings.HasValideKey())
+            if (_appSettings.HasValideDataForAuth())
             {
+                throw new CommandHandleException($"auth was before, for relogin user clear command");
+            }
+            _appSettings.Login = commandSplit[1];
+            _appSettings.Key = commandSplit[2];
+            if (!_appSettings.HasValideDataForAuth())
+            {
+                _appSettings.Login = null;
                 _appSettings.Key = null;
                 throw new CommandHandleException("ключ не передан или не валиден");
             }

@@ -52,15 +52,7 @@ namespace PassCode.Models.BL
             return GenerateRandomPrefix() + str;
         }
 
-        public string RemoveRandomizeFromString(string str)
-        {
-            if (string.IsNullOrWhiteSpace(str))
-            {
-                return string.Empty;
-            }
-
-            return str[1..];
-        }
+        
 
 
 
@@ -77,7 +69,7 @@ namespace PassCode.Models.BL
             }
             catch
             {
-                throw new CommandHandleException("передана неверная входное слово");
+                throw new CommandHandleException("переданное зашифрованное слово в неверном формате");
             }
         }
 
@@ -178,7 +170,7 @@ namespace PassCode.Models.BL
                 aesAlg.IV = IV;
 
                 // Create a decryptor to perform the stream transform.
-                using (ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV))
+                using (ICryptoTransform decryptor = aesAlg.CreateDecryptor())// aesAlg.Key, aesAlg.IV))
                 {
                     // Create the streams used for decryption.
                     using (MemoryStream msDecrypt = new MemoryStream(cipherText))
@@ -204,10 +196,22 @@ namespace PassCode.Models.BL
 
         private string GenerateRandomPrefix()
         {
+            //return "";
             Random rnd = new Random();
-            return ((char)rnd.Next(33, 123)).ToString();
+            //return ((char)rnd.Next(33, 123)).ToString();
+            return ((char)rnd.Next(97, 122)).ToString();
         }
 
-        
+        public string RemoveRandomizeFromString(string str)
+        {
+            //return str;
+            if (string.IsNullOrWhiteSpace(str))
+            {
+                return string.Empty;
+            }
+
+            return str[1..];
+        }
+
     }
 }

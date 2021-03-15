@@ -27,7 +27,7 @@ namespace PassCode.Models.BL.Commands
 
         public string GetShortDescription()
         {
-            return "show - show all data(or keys only) - 'show <?keys>'";
+            return $"{_customName} - show all data(or keys only) - '{_customName} <?keys>'";
         }
 
         public bool TryDo(string command)
@@ -43,7 +43,8 @@ namespace PassCode.Models.BL.Commands
                 var decrString = "...";
                 if (!showOnlyKeys)
                 {
-                    decrString = _coder.RemoveRandomizeFromString(word.Value);
+                    //decrString = _coder.RemoveRandomizeFromString(word.Value);
+                    decrString = word.Value;
                 }
                 _output.WriteLine($"{word.Key} - {decrString}");
             }

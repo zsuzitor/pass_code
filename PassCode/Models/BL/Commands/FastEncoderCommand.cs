@@ -25,7 +25,7 @@ namespace PassCode.Models.BL.Commands
 
         public string GetShortDescription()
         {
-            return "fenc - fast encode string - 'fenc <str> <pass>'";
+            return $"{_customName} - fast encode string - '{_customName} <str> <pass>'";
         }
 
         public bool TryDo(string command)
@@ -42,9 +42,9 @@ namespace PassCode.Models.BL.Commands
                 throw new CommandHandleException($"{argCount} аргумента");
             }
 
-            var bytes = _coder.EncryptWithByte(splitCommand[1], splitCommand[2]);
+            var bytes = _coder.EncryptWithByte(_coder.AddRandomizeToString(splitCommand[1]), splitCommand[2]);
             var str = _coder.BytesToCustomString(bytes);
-            
+
             _output.WriteLine(str);
 
             return true;

@@ -24,7 +24,7 @@ namespace PassCode.Models.BL.Commands
 
         public string GetShortDescription()
         {
-            return "rm - remove word by key - rm <key>";
+            return $"{_customName} - remove word by key - {_customName} <key>";
         }
 
         public bool TryDo(string command)
@@ -42,10 +42,7 @@ namespace PassCode.Models.BL.Commands
             }
 
             _ = _container.Delete(splitCommand[1]);
-            //if (word == null)
-            //{
-            //    throw new CommandHandleException("не найдено");
-            //}
+
 
             _output.WriteLine($"deleted");
 

@@ -12,15 +12,17 @@ namespace PassCode.Models.BL.Commands
         private readonly IOutput _output;
         private readonly IWordContainer _container;
         private readonly ICoder _coder;
+        private readonly IAppSettings _appSettings;
 
 
-        public AddCommand(IOutput output, IWordContainer container, ICoder coder)
+        public AddCommand(IOutput output, IWordContainer container, ICoder coder, IAppSettings appSettings)
         {
             _customName = "add";
 
             _output = output;
             _container = container;
             _coder = coder;
+            _appSettings = appSettings;
         }
 
         public string GetCutomName()
@@ -30,7 +32,7 @@ namespace PassCode.Models.BL.Commands
 
         public string GetShortDescription()
         {
-            return "add - add new word - 'add <key> <value>'";
+            return $"{_customName} - add new word - '{_customName} <key> <value>'";
         }
 
         public bool TryDo(string command)
@@ -47,19 +49,6 @@ namespace PassCode.Models.BL.Commands
                 throw new CommandHandleException($"{argCount} аргумента");
             }
 
-            if (!_container.Decoded)
-            {
-                if (_container.HasRecords())
-                {
-                    throw new CommandHandleException($"попытка работы с зашифрованным списком");
-                }
-                else
-                {
-                    _container.Decoded = true;
-                }
-            }
-            
-
             var key = splitCommand[1];
             if (key.Contains("-"))
             {
@@ -67,12 +56,12 @@ namespace PassCode.Models.BL.Commands
             }
 
             var value = _coder.AddRandomizeToString(splitCommand[2]);
-            _container.Add(new OneWord() { Key = key, Value = value, });
+            var secretBytes = _coder.EncryptWithByte(value, _appSettings.Key);
+            var encodedValString = _coder.BytesToCustomString(secretBytes);
+            _container.Add(new OneWord() { Key = key, Value = encodedValString, });
 
             return true;
         }
-
-        
 
     }
 }

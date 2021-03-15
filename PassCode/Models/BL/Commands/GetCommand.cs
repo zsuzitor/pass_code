@@ -12,13 +12,15 @@ namespace PassCode.Models.BL.Commands
         private readonly IOutput _output;
         private readonly IWordContainer _container;
         private readonly ICoder _coder;
+        private readonly IAppSettings _appSettings;
 
-        public GetCommand(IOutput output, IWordContainer container, ICoder coder)
+        public GetCommand(IOutput output, IWordContainer container, ICoder coder, IAppSettings appSettings)
         {
             _customName = "get";
             _output = output;
             _container = container;
             _coder = coder;
+            _appSettings = appSettings;
         }
 
         public string GetCutomName()
@@ -28,7 +30,7 @@ namespace PassCode.Models.BL.Commands
 
         public string GetShortDescription()
         {
-            return "get - get word by key - 'get <key>'";
+            return $"{_customName} - get word by key - '{_customName} <word_key> <?'dec'>'";
         }
 
         public bool TryDo(string command)
@@ -51,7 +53,19 @@ namespace PassCode.Models.BL.Commands
                 throw new CommandHandleException("не найдено");
             }
 
-            _output.WriteLine($"{word.Key} - {_coder.RemoveRandomizeFromString(word.Value)}");
+            if (splitCommand.Length > 2 && splitCommand[2] == "dec")
+            {
+                var decodedVal = _coder.RemoveRandomizeFromString(
+                    _coder.DecryptFromBytes(
+                        _coder.CustomStringToBytes(word.Value), _appSettings.Key));
+                _output.WriteLine($"{word.Key} - {decodedVal}");
+            }
+            else
+            {
+                _output.WriteLine($"{word.Key} - {word.Value}");
+            }
+
+
 
 
             return true;

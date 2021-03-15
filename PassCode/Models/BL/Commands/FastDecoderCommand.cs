@@ -27,7 +27,7 @@ namespace PassCode.Models.BL.Commands
 
         public string GetShortDescription()
         {
-            return "fdec - fast decode string - 'fdec <str> <pass>'";
+            return $"{_customName} - fast decode string - '{_customName} <str> <pass>'";
         }
 
         public bool TryDo(string command)
@@ -46,7 +46,7 @@ namespace PassCode.Models.BL.Commands
 
             var bytes = _coder.CustomStringToBytes(splitCommand[1]);
             var str = _coder.DecryptFromBytes(bytes, splitCommand[2]);
-            _output.WriteLine(str);
+            _output.WriteLine(_coder.RemoveRandomizeFromString(str));
 
             return true;
         }

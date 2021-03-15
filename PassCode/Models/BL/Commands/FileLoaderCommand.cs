@@ -2,7 +2,6 @@
 
 using PassCode.Models.BL.Interfaces;
 using PassCode.Models.BO;
-using System.IO;
 
 namespace PassCode.Models.BL.Commands
 {
@@ -13,13 +12,18 @@ namespace PassCode.Models.BL.Commands
         private readonly IOutput _output;
         private readonly IWordContainer _container;
         private readonly IFileAction _fileAction;
+        private readonly ICoder _coder;
+        private readonly IAppSettings _appSettings;
 
-        public FileLoaderCommand(IOutput output, IWordContainer container, IFileAction fileAction)
+        public FileLoaderCommand(IOutput output, IWordContainer container,
+            IFileAction fileAction, ICoder coder, IAppSettings appSettings)
         {
-            _customName = "lcf";
+            _customName = "load";
             _output = output;
             _container = container;
             _fileAction = fileAction;
+            _coder = coder;
+            _appSettings = appSettings;
         }
 
         public string GetCutomName()
@@ -29,7 +33,7 @@ namespace PassCode.Models.BL.Commands
 
         public string GetShortDescription()
         {
-            return "lcf - load crypted file - 'lcf <filepath>'";
+            return $"{_customName} - load crypted file - '{_customName} <filepath>'";
         }
 
         public bool TryDo(string command)
@@ -56,7 +60,37 @@ namespace PassCode.Models.BL.Commands
             }
 
             var data = _fileAction.ReadAllLines(splt[1]);
-            foreach (var line in data)
+            if (data.Length < 2)
+            {
+                throw new CommandHandleException("file is empty, please create new");
+            }
+
+            var encLoginSplit = data[0].Split("-");
+            if (encLoginSplit.Length < 2)
+            {
+                throw new CommandHandleException("file is wrong sign");
+            }
+
+            var encLogin = encLoginSplit[1];
+
+            string savedLogin = "";
+            try
+            {
+                savedLogin = _coder.RemoveRandomizeFromString(
+               _coder.DecryptFromBytes(
+                   _coder.CustomStringToBytes(encLogin), _appSettings.Key));
+            }
+            catch
+            {
+            }
+
+            if (!_appSettings.LoginIsGood(savedLogin))
+            {
+                throw new CommandHandleException(
+                    "bad password for this db, please load any db or change password(clear command)");
+            }
+
+            foreach (var line in data[1..])
             {
                 var splitLine = line.Split("-");
                 var newWord = new OneWord() { Key = splitLine[0], Value = splitLine[1] };
