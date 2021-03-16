@@ -53,8 +53,7 @@ namespace PassCode.Models.BL.Commands
             }
 
             var value = splitCommand[2];
-            var secretBytes = _coder.EncryptWithByte(value, _appSettings.Key);
-            var encodedValString = _coder.BytesToCustomString(secretBytes);
+            var encodedValString = _coder.EncryptWithString(value, _appSettings.Key);
             _container.Add(new OneWord() { Key = key, Value = encodedValString, });
 
             return true;

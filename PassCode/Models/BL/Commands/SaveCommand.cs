@@ -78,10 +78,7 @@ namespace PassCode.Models.BL.Commands
             }
 
             List<string> forWrite = new List<string>();
-            forWrite.Add("check" + "-"
-                + _coder.BytesToCustomString(
-                    _coder.EncryptWithByte(
-                        loginForSave, passwordForSave)));
+            forWrite.Add("check" + Consts.FileDataStringSeparate + _coder.EncryptWithString(loginForSave, passwordForSave));
             foreach (var item in _container.GetAll())
             {
                 string value = item.Value;
@@ -91,13 +88,11 @@ namespace PassCode.Models.BL.Commands
                 }
                 else
                 {
-                    value = _coder.BytesToCustomString(
-                        _coder.EncryptWithByte(
-                            _coder.DecryptFromBytes(
-                                _coder.CustomStringToBytes(value), _appSettings.Key), passwordForSave));
+                    value = _coder.EncryptWithString(
+                            _coder.DecryptFromString(value, _appSettings.Key), passwordForSave);
                 }
 
-                forWrite.Add(item.Key + "-" + value);
+                forWrite.Add(item.Key + Consts.FileDataStringSeparate + value);
             }
 
             _fileAction.WriteAllLines(pathForSave, forWrite);

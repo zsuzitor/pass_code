@@ -55,9 +55,7 @@ namespace PassCode.Models.BL.Commands
 
             if (splitCommand.Length > 2 && splitCommand[2] == "dec")
             {
-                var decodedVal = 
-                    _coder.DecryptFromBytes(
-                        _coder.CustomStringToBytes(word.Value), _appSettings.Key);
+                var decodedVal = _coder.DecryptFromString(word.Value, _appSettings.Key);
                 _output.WriteLine($"{word.Key} - {decodedVal}");
             }
             else

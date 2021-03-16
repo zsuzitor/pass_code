@@ -42,9 +42,7 @@ namespace PassCode.Models.BL.Commands
                 throw new CommandHandleException($"{argCount} аргумента");
             }
 
-            var bytes = _coder.EncryptWithByte(splitCommand[1], splitCommand[2]);
-            var str = _coder.BytesToCustomString(bytes);
-
+            var str = _coder.EncryptWithString(splitCommand[1], splitCommand[2]);
             _output.WriteLine(str);
 
             return true;

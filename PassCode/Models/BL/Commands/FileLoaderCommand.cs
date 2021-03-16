@@ -65,7 +65,7 @@ namespace PassCode.Models.BL.Commands
                 throw new CommandHandleException("file is empty, please create new");
             }
 
-            var encLoginSplit = data[0].Split("-");
+            var encLoginSplit = data[0].Split(Consts.FileDataStringSeparate);
             if (encLoginSplit.Length < 2)
             {
                 throw new CommandHandleException("file is wrong sign");
@@ -76,9 +76,7 @@ namespace PassCode.Models.BL.Commands
             string savedLogin = "";
             try
             {
-                savedLogin = 
-               _coder.DecryptFromBytes(
-                   _coder.CustomStringToBytes(encLogin), _appSettings.Key);
+                savedLogin = _coder.DecryptFromString(encLogin, _appSettings.Key);
             }
             catch
             {
@@ -92,7 +90,7 @@ namespace PassCode.Models.BL.Commands
 
             foreach (var line in data[1..])
             {
-                var splitLine = line.Split("-");
+                var splitLine = line.Split(Consts.FileDataStringSeparate);
                 var newWord = new OneWord() { Key = splitLine[0], Value = splitLine[1] };
                 _container.Add(newWord);
             }

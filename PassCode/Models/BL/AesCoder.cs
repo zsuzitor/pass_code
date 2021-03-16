@@ -37,19 +37,31 @@ namespace PassCode.Models.BL
 
         public string BytesToCustomString(byte[] bytes)
         {
-            return string.Join('.', bytes);
+            return Convert.ToBase64String(bytes);
+            //return string.Join('.', bytes);
         }
 
         public byte[] CustomStringToBytes(string str)
         {
-            try
-            {
-                return str.Split(".", StringSplitOptions.RemoveEmptyEntries).Select(x => byte.Parse(x)).ToArray();
-            }
-            catch
-            {
-                throw new CommandHandleException("переданное зашифрованное слово в неверном формате");
-            }
+            return Convert.FromBase64String(str);
+            //try
+            //{
+            //    return str.Split(".", StringSplitOptions.RemoveEmptyEntries).Select(x => byte.Parse(x)).ToArray();
+            //}
+            //catch
+            //{
+            //    throw new CommandHandleException("переданное зашифрованное слово в неверном формате");
+            //}
+        }
+
+        public string EncryptWithString(string dataForEncrypt, string key)
+        {
+            return BytesToCustomString(EncryptWithByte(dataForEncrypt, key));
+        }
+
+        public string DecryptFromString(string dataForDecrypt, string key)
+        {
+            return DecryptFromBytes(CustomStringToBytes(dataForDecrypt), key);
         }
 
 
@@ -150,5 +162,6 @@ namespace PassCode.Models.BL
             return plaintext;
         }
 
+        
     }
 }
