@@ -38,9 +38,7 @@ namespace PassCode.Models.BL.Commands
             }
 
             _container.Clear();
-            //_container.Decoded = false;
             _appSettings.ClearCredit();
-            //_container.FileLoaded = false;
             _output.Clear();
 
             return true;

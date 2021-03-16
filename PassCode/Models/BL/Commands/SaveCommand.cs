@@ -3,7 +3,6 @@
 using PassCode.Models.BL.Interfaces;
 using PassCode.Models.BO;
 using System.Collections.Generic;
-using System.IO;
 
 namespace PassCode.Models.BL.Commands
 {
@@ -11,17 +10,15 @@ namespace PassCode.Models.BL.Commands
     {
         private readonly string _customName;
 
-        private readonly IOutput _output;
         private readonly IWordContainer _container;
         private readonly ICoder _coder;
         private readonly IAppSettings _appSettings;
         private readonly IFileAction _fileAction;
 
-        public SaveCommand(IOutput output, IWordContainer container, ICoder coder,
+        public SaveCommand(IWordContainer container, ICoder coder,
             IAppSettings appSettings, IFileAction fileAction)
         {
             _customName = "save";
-            _output = output;
             _container = container;
             _coder = coder;
             _appSettings = appSettings;
@@ -70,7 +67,6 @@ namespace PassCode.Models.BL.Commands
                     passwordForSave = splitCommand[3];
                     differentCredit = true;
                 }
-
             }
 
 
@@ -81,12 +77,11 @@ namespace PassCode.Models.BL.Commands
                 throw new CommandHandleException($"file is exist");
             }
 
-
             List<string> forWrite = new List<string>();
             forWrite.Add("check" + "-"
                 + _coder.BytesToCustomString(
                     _coder.EncryptWithByte(
-                        _coder.AddRandomizeToString(loginForSave), passwordForSave)));
+                        loginForSave, passwordForSave)));
             foreach (var item in _container.GetAll())
             {
                 string value = item.Value;

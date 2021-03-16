@@ -9,17 +9,14 @@ namespace PassCode.Models.BL.Commands
     {
         private readonly string _customName;
 
-        private readonly IOutput _output;
         private readonly IWordContainer _container;
         private readonly ICoder _coder;
         private readonly IAppSettings _appSettings;
 
 
-        public AddCommand(IOutput output, IWordContainer container, ICoder coder, IAppSettings appSettings)
+        public AddCommand(IWordContainer container, ICoder coder, IAppSettings appSettings)
         {
             _customName = "add";
-
-            _output = output;
             _container = container;
             _coder = coder;
             _appSettings = appSettings;
@@ -55,7 +52,7 @@ namespace PassCode.Models.BL.Commands
                 throw new CommandHandleException($"символ '-' в ключах запрещен");
             }
 
-            var value = _coder.AddRandomizeToString(splitCommand[2]);
+            var value = splitCommand[2];
             var secretBytes = _coder.EncryptWithByte(value, _appSettings.Key);
             var encodedValString = _coder.BytesToCustomString(secretBytes);
             _container.Add(new OneWord() { Key = key, Value = encodedValString, });

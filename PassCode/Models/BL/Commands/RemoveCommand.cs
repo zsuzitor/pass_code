@@ -42,8 +42,6 @@ namespace PassCode.Models.BL.Commands
             }
 
             _ = _container.Delete(splitCommand[1]);
-
-
             _output.WriteLine($"deleted");
 
             return true;

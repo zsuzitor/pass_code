@@ -55,18 +55,15 @@ namespace PassCode.Models.BL.Commands
 
             if (splitCommand.Length > 2 && splitCommand[2] == "dec")
             {
-                var decodedVal = _coder.RemoveRandomizeFromString(
+                var decodedVal = 
                     _coder.DecryptFromBytes(
-                        _coder.CustomStringToBytes(word.Value), _appSettings.Key));
+                        _coder.CustomStringToBytes(word.Value), _appSettings.Key);
                 _output.WriteLine($"{word.Key} - {decodedVal}");
             }
             else
             {
                 _output.WriteLine($"{word.Key} - {word.Value}");
             }
-
-
-
 
             return true;
         }

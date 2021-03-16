@@ -17,6 +17,10 @@ namespace PassCode
             //при загрузке файла не давать его загрузить если есть не сохраненные данные
             //commandHandleException - должно быть только в command, все что глубже должно бросать другое
 
+            //Encoding.UTF8.GetString(encr)
+            //Convert.ToBase64String(msEncrypt.ToArray());
+
+
             var commands = new List<ICustomCommand>();
             IAppSettings appSettings = new AppSettings();
             CommandsInit(commands, appSettings);
@@ -36,9 +40,11 @@ namespace PassCode
 
                         Console.WriteLine("Enter login: ");
                         var login = Login();
+                        Console.WriteLine();
                         Console.WriteLine("Enter password: ");
                         var password = Login();
                         command = $"login {login} {password}";
+                        Console.WriteLine();
                     }
                     else
                     {
@@ -85,11 +91,11 @@ namespace PassCode
             IFileAction fileActions = new CommonFileAction();
 
             commands.Add(new HelpCommand(outPut, commands));
-            commands.Add(new AddCommand(outPut, wordContainer, coder, appSettings));
+            commands.Add(new AddCommand(wordContainer, coder, appSettings));
             //commands.Add(new FileDecoderCommand(outPut, wordContainer, coder, appSettings));
             commands.Add(new FileLoaderCommand(outPut, wordContainer, fileActions, coder, appSettings));
             commands.Add(new RemoveCommand(outPut, wordContainer));
-            commands.Add(new SaveCommand(outPut, wordContainer, coder, appSettings, fileActions));
+            commands.Add(new SaveCommand(wordContainer, coder, appSettings, fileActions));
             commands.Add(new LoginCommand(outPut, appSettings));
             commands.Add(new ShowCommand(outPut, wordContainer, coder));
             commands.Add(new GetCommand(outPut, wordContainer, coder, appSettings));
@@ -108,7 +114,8 @@ namespace PassCode
                 key = Console.ReadKey(true);
 
                 // Ignore any key out of range.
-                if (((int)key.Key) >= 65 && ((int)key.Key <= 90))//TODO посмотреть что тут за символы в ренже
+                if ((((int)key.Key) >= 65 && ((int)key.Key <= 90))
+                    || ((int)key.Key) >= 48 && ((int)key.Key <= 57))//TODO посмотреть что тут за символы в ренже
                 {
                     // Append the character to the password.
                     login += key.KeyChar;

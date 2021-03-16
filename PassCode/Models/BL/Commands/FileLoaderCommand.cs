@@ -76,9 +76,9 @@ namespace PassCode.Models.BL.Commands
             string savedLogin = "";
             try
             {
-                savedLogin = _coder.RemoveRandomizeFromString(
+                savedLogin = 
                _coder.DecryptFromBytes(
-                   _coder.CustomStringToBytes(encLogin), _appSettings.Key));
+                   _coder.CustomStringToBytes(encLogin), _appSettings.Key);
             }
             catch
             {
@@ -96,8 +96,6 @@ namespace PassCode.Models.BL.Commands
                 var newWord = new OneWord() { Key = splitLine[0], Value = splitLine[1] };
                 _container.Add(newWord);
             }
-
-            //_container.FileLoaded = true;
 
             return true;
         }

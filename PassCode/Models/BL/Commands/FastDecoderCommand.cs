@@ -46,7 +46,7 @@ namespace PassCode.Models.BL.Commands
 
             var bytes = _coder.CustomStringToBytes(splitCommand[1]);
             var str = _coder.DecryptFromBytes(bytes, splitCommand[2]);
-            _output.WriteLine(_coder.RemoveRandomizeFromString(str));
+            _output.WriteLine(str);
 
             return true;
         }
