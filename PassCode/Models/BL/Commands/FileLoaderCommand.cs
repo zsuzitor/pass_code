@@ -8,18 +8,15 @@ namespace PassCode.Models.BL.Commands
     public class FileLoaderCommand : ICustomCommand
     {
         private readonly string _customName;
-
-        private readonly IOutput _output;
         private readonly IWordContainer _container;
         private readonly IFileAction _fileAction;
         private readonly ICoder _coder;
         private readonly IAppSettings _appSettings;
 
-        public FileLoaderCommand(IOutput output, IWordContainer container,
+        public FileLoaderCommand(IWordContainer container,
             IFileAction fileAction, ICoder coder, IAppSettings appSettings)
         {
             _customName = "load";
-            _output = output;
             _container = container;
             _fileAction = fileAction;
             _coder = coder;

@@ -10,14 +10,12 @@ namespace PassCode.Models.BL.Commands
 
         private readonly IOutput _output;
         private readonly IWordContainer _container;
-        private readonly ICoder _coder;
 
-        public ShowCommand(IOutput output, IWordContainer container, ICoder coder)
+        public ShowCommand(IOutput output, IWordContainer container)
         {
             _customName = "show";
             _output = output;
             _container = container;
-            _coder = coder;
         }
 
         public string GetCutomName()

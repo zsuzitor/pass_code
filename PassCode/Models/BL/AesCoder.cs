@@ -83,12 +83,12 @@ namespace PassCode.Models.BL
             return keyBytesGood;
         }
 
-        private byte[] EncryptStringToBytesAes(string plainText, byte[] Key)
+        private byte[] EncryptStringToBytesAes(string plainText, byte[] key)
         {
             if (plainText == null || plainText.Length <= 0)
-                throw new ArgumentNullException("plainText");
-            if (Key == null || Key.Length <= 0)
-                throw new ArgumentNullException("Key");
+                throw new ArgumentNullException(nameof(plainText));
+            if (key == null || key.Length <= 0)
+                throw new ArgumentNullException(nameof(key));
 
             byte[] encrypted;
 
@@ -96,7 +96,7 @@ namespace PassCode.Models.BL
 
             using Aes aesAlg = Aes.Create();
 
-            aesAlg.Key = Key;
+            aesAlg.Key = key;
             aesAlg.GenerateIV();
 
             // Create an encryptor to perform the stream transform.
@@ -123,13 +123,13 @@ namespace PassCode.Models.BL
         }
 
 
-        private string DecryptStringFromBytesAes(byte[] cipherText, byte[] Key)
+        private string DecryptStringFromBytesAes(byte[] cipherText, byte[] key)
         {
             // Check arguments.
             if (cipherText == null || cipherText.Length <= 0)
-                throw new ArgumentNullException("cipherText");
-            if (Key == null || Key.Length <= 0)
-                throw new ArgumentNullException("Key");
+                throw new ArgumentNullException(nameof(cipherText));
+            if (key == null || key.Length <= 0)
+                throw new ArgumentNullException(nameof(key));
 
             string plaintext = null;
 
@@ -141,7 +141,7 @@ namespace PassCode.Models.BL
             using (Aes aesAlg = Aes.Create())
             {
 
-                aesAlg.Key = Key;
+                aesAlg.Key = key;
                 aesAlg.IV = iv;
 
                 using (ICryptoTransform decryptor = aesAlg.CreateDecryptor())

@@ -9,14 +9,11 @@ namespace PassCode.Models.BL.Commands
     {
         private readonly string _customName;
 
-        private readonly IOutput _output;
         private readonly IAppSettings _appSettings;
 
-        public LoginCommand(IOutput output, IAppSettings appSettings)
+        public LoginCommand(IAppSettings appSettings)
         {
             _customName = "login";
-
-            _output = output;
             _appSettings = appSettings;
         }
 

@@ -93,11 +93,11 @@ namespace PassCode
             commands.Add(new HelpCommand(outPut, commands));
             commands.Add(new AddCommand(wordContainer, coder, appSettings));
             //commands.Add(new FileDecoderCommand(outPut, wordContainer, coder, appSettings));
-            commands.Add(new FileLoaderCommand(outPut, wordContainer, fileActions, coder, appSettings));
+            commands.Add(new FileLoaderCommand(wordContainer, fileActions, coder, appSettings));
             commands.Add(new RemoveCommand(outPut, wordContainer));
             commands.Add(new SaveCommand(wordContainer, coder, appSettings, fileActions));
-            commands.Add(new LoginCommand(outPut, appSettings));
-            commands.Add(new ShowCommand(outPut, wordContainer, coder));
+            commands.Add(new LoginCommand(appSettings));
+            commands.Add(new ShowCommand(outPut, wordContainer));
             commands.Add(new GetCommand(outPut, wordContainer, coder, appSettings));
             commands.Add(new ClearCommand(outPut, wordContainer, appSettings));
             commands.Add(new FastDecoderCommand(outPut, coder));
