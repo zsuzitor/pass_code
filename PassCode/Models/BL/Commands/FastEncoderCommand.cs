@@ -25,7 +25,7 @@ namespace PassCode.Models.BL.Commands
 
         public string GetShortDescription()
         {
-            return $"{_customName} - fast encode string - '{_customName} <str> <pass>'";
+            return $"{_customName} - fast encode string - '{_customName} <some count of str> <last part is pass>'";
         }
 
         public bool TryDo(string command)
@@ -35,14 +35,16 @@ namespace PassCode.Models.BL.Commands
                 return false;
             }
 
-            var splitCommand = command.Split(" ");
+            var splitCommand = command.Split(' ', System.StringSplitOptions.RemoveEmptyEntries);
             var argCount = 3;
             if (splitCommand.Length < argCount)
             {
                 throw new CommandHandleException($"{argCount} аргумента");
             }
 
-            var str = _coder.EncryptWithString(splitCommand[1], splitCommand[2]);
+            var values = splitCommand[1..^1];
+            var value = string.Join(" ", values);
+            var str = _coder.EncryptWithString(value, splitCommand[splitCommand.Length - 1]);
             _output.WriteLine(str);
 
             return true;

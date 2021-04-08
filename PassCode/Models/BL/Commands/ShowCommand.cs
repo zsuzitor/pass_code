@@ -25,7 +25,7 @@ namespace PassCode.Models.BL.Commands
 
         public string GetShortDescription()
         {
-            return $"{_customName} - show all data(or keys only) - '{_customName} <?keys>'";
+            return $"{_customName} - show all data(or keys only) - '{_customName} <?all>'";
         }
 
         public bool TryDo(string command)
@@ -35,7 +35,7 @@ namespace PassCode.Models.BL.Commands
                 return false;
             }
 
-            var showOnlyKeys = command.Contains("keys");
+            var showOnlyKeys = !command.Contains("all");
             foreach (var word in _container.GetAll())
             {
                 var decrString = "...";

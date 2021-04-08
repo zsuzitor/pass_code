@@ -29,7 +29,7 @@ namespace PassCode.Models.BL.Commands
 
         public string GetShortDescription()
         {
-            return $"{_customName} - add new word - '{_customName} <key> <value>'";
+            return $"{_customName} - add new word - '{_customName} <key> <some count of value>'";
         }
 
         public bool TryDo(string command)
@@ -39,7 +39,12 @@ namespace PassCode.Models.BL.Commands
                 return false;
             }
 
-            var splitCommand = command.Split(" ");
+            if (command.Contains(Consts.FileDataStringSeparate))
+            {
+                throw new CommandHandleException($"символ '{Consts.FileDataStringSeparate}' в ключах запрещен");
+            }
+
+            var splitCommand = command.Split(' ', System.StringSplitOptions.RemoveEmptyEntries);
             var argCount = 3;
             if (splitCommand.Length < argCount)
             {
@@ -47,12 +52,9 @@ namespace PassCode.Models.BL.Commands
             }
 
             var key = splitCommand[1];
-            if (key.Contains("-"))
-            {
-                throw new CommandHandleException($"символ '-' в ключах запрещен");
-            }
 
-            var value = splitCommand[2];
+            var values = splitCommand[2..];//убираем ключевое слово и key
+            var value = string.Join(" ", values);
             var encodedValString = _coder.EncryptWithString(value, _appSettings.Key);
             _container.Add(new OneWord() { Key = key, Value = encodedValString, });
 
